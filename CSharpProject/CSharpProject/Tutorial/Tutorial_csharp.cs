@@ -9,18 +9,42 @@ Date          Comment
 ========================
 09062020      First revision
 09072020      Pass by reference, Nested printings, method libraries
+09112020      Variables concept, Exception
+09132020      Switch case statement, File I/O
 **/
 
 // Example of C# program
 
 using System; // instruction to compiler to tell we want to use things from namespace
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
 
 class GlazerCalc // class is a container that holds data and program code. Every class needs an identifier (name)
-{ 
+{
+    // Global variable - 09112020
+    static int testVar = 0;
+    static int size = 12;
+    // Array C#
+    static string[] month = new string[size];
+
+    static void OtherMethod()
+    {
+        testVar = 999;
+    }
+
+    static void InsertMonth()
+    {
+        foreach (int i in Enumerable.Range(0, 12))
+        {
+            month[i] = Console.ReadLine();
+            Console.WriteLine(i + " month: " + month[i]);
+        }
+    }
+
     // Example code
-    void CalcGlaze() 
+    static void CalcGlaze() 
     {
         double width, height, woodLength, glassArea;
         string widthString, heightString;
@@ -84,7 +108,7 @@ class GlazerCalc // class is a container that holds data and program code. Every
     }
 
     // Learning neater printings - 09072020
-    public void printVal()
+    public static void printVal()
     {
         int a = 1232;
         float b = 123.44422235f;
@@ -98,7 +122,7 @@ class GlazerCalc // class is a container that holds data and program code. Every
     }
 
     // Pass by Reference - 09072020
-    public void passByRef(ref int i)
+    public static void passByRef(ref int i)
     {
         i += 1;
         Console.WriteLine("i = {0}", i);
@@ -133,15 +157,88 @@ class GlazerCalc // class is a container that holds data and program code. Every
         age = readInt("Enter your age : ", 0, 100);
     }
 
+    protected static void testException()
+    {
+        try
+        {
+            throw new Exception("Lalalaala");
+        } catch (Exception e)
+        {
+            Console.WriteLine("Exception caught: " + e.Message);
+        }
+    }
+
+    // 09132020
+    protected static void testSwitch()
+    {
+        Console.Write("Write your choice: ");
+        string s = Console.ReadLine();
+        int i = 100;
+        switch(s)
+        {
+            case "a":
+                testException();
+                break;
+            case "b":
+                passByRef(ref i);
+                break;
+            case "c":
+                CalcGlaze();
+                break;
+            case "d":
+                printVal();
+                break;
+            default:
+                Console.WriteLine("Invalid command!");
+                break;
+        }
+    }
+
+    static void fileIO()
+    {
+        // New class
+        Console.WriteLine("Opening a new file");
+        StreamWriter writer;
+        writer = new StreamWriter("test.txt");
+
+        writer.WriteLine("Hello World!");
+
+        Console.WriteLine("Close file");
+        writer.Close();
+    }
+    // End 09132020
+
     static void Main() // main function of class, mandatory
     {
         GlazerCalc g1 = new GlazerCalc();
         int i = 99;
     //    g1.CalcGlaze();
     //    g1.printVal();
-        g1.passByRef(ref i);
-        g1.testRead();
+    //    g1.passByRef(ref i);
+    //    g1.testRead();
 
+        try // Simple try catch exception nest (09112020)
+        {
+            /*
+            Console.WriteLine("testVar: {0}", testVar);
+            OtherMethod();
+            Console.WriteLine("testVar: {0}", testVar);
+            Console.WriteLine("Append array");
+            */
+//            testSwitch();
+            fileIO();
+            //throw new Exception("Yes, I've done it.");
+            //            InsertMonth();
+            //testException();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+        finally
+        {
+            // Do nothing
+        }
     }
     
 }
