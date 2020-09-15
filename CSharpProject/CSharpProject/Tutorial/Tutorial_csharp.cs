@@ -11,6 +11,7 @@ Date          Comment
 09072020      Pass by reference, Nested printings, method libraries
 09112020      Variables concept, Exception
 09132020      Switch case statement, File I/O
+09152020      Reading from a file
 **/
 
 // Example of C# program
@@ -20,6 +21,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Text;
 
 class GlazerCalc // class is a container that holds data and program code. Every class needs an identifier (name)
 {
@@ -201,10 +203,36 @@ class GlazerCalc // class is a container that holds data and program code. Every
         StreamWriter writer;
         writer = new StreamWriter("test.txt");
 
-        writer.WriteLine("Hello World!");
+        // Writing to a new File
+        Console.Write("Write your input text here: ");
+        string s = Console.ReadLine();
+        writer.WriteLine(s);
 
         Console.WriteLine("Close file");
         writer.Close();
+
+        // File reading (09152020)
+        String path = "C:\\Users\\user\\Documents\\";
+        String utfPath = "C:\\Users\\user\\Documents\\food.txt";
+
+        Console.WriteLine("Read file");
+        StreamReader reader = new StreamReader("test.txt");
+        while (reader.EndOfStream == false)
+        {
+            try
+            {
+                string line = reader.ReadLine();
+//                string utfLine = File.ReadAllText(utfPath, Encoding.UTF8);
+                // Read in utf-encoding
+//                Console.OutputEncoding = Encoding.UTF8;
+                Console.WriteLine(line);
+            } catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+        Console.WriteLine("Close file");
+        reader.Close();
     }
     // End 09132020
 
