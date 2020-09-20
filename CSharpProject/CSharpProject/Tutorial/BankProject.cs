@@ -9,7 +9,9 @@ Created on 18 Sep 2020
 Date          Comment
 ========================
 09182020      First revision
-**/
+09202020	  Default constructor, constructor management and overwriting
+09202020	  Components and interface
+ **/
 
 using System;
 
@@ -35,12 +37,55 @@ struct Account
 };
 */
 
-public class Account
+// Interface implementation - 09202020
+public interface IAccount
+{
+	void PayInFunds(decimal amount);
+	bool WithdrawFunds(decimal amount);
+	decimal GetBalance();
+}
+
+public class Account : IAccount
 {
 	private decimal balance = 0;
+	private string name, address;
+
 	// static variables
 	private static decimal minIncome;
 	private static int minAge;
+
+	// default constructor - 09202020
+	public Account()
+    {
+		Console.WriteLine("New account created");
+    }
+
+
+	// Constructor overloading - 09202020
+	public Account(string inName, string inAddress, decimal inBalance)
+    {
+		balance = inBalance;
+		name = inName;
+		address = inAddress;
+
+		Console.WriteLine("New account created");
+		Console.WriteLine("Name: " + name);
+		Console.WriteLine("Address: " + address);
+		Console.WriteLine("Balance: " + balance);
+	}
+
+	// "this" method - 09202020
+	public Account (string inName, string inAddress) : 
+		this(inName, inAddress, 0)
+    {
+		Console.WriteLine("zero balance");
+    }
+
+	public Account(string inName) :
+	this(inName, "Not supplied", 0)
+	{
+		Console.WriteLine("no address and zero balance");
+	}
 
 	public bool WithdrawFunds (decimal amount)
     {
@@ -55,7 +100,7 @@ public class Account
 
 	public void PayInFunds (decimal amount)
     {
-		balance = balance + amount;
+		balance += amount;
     }
 
 	public decimal GetBalance ()
@@ -81,7 +126,7 @@ public class BankProject
 	// default constructor
 	public BankProject()
     {
-
+		Console.WriteLine("Testing default constructor.");
     }
 
 	public static void Main()
@@ -100,7 +145,11 @@ public class BankProject
 		*/
 
 		Account test = new Account();
-		test.PayInFunds(23343);
-		Console.WriteLine("Balance: " + test.GetBalance());
+		//		test.PayInFunds(23343);
+		//		Console.WriteLine("Balance: " + test.GetBalance());
+		// Test new account
+		Account johnAcc = new Account("John Smith", "123 street, US", 32222);
+		Account willAcc = new Account("Will Smith");
+		Account jamAcc = new Account("Jam Hsiao", "Taipei, Taiwan");
 	}
 }
