@@ -12,6 +12,7 @@ Date          Comment
 09112020      Variables concept, Exception
 09132020      Switch case statement, File I/O
 09152020      Reading from a file
+09182020      Enumeration, Structure
 **/
 
 // Example of C# program
@@ -22,6 +23,34 @@ using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+
+// 09182020
+enum Malaysia
+{
+    Selangor,
+    KualaLumpur,
+    Perlis,
+    Labuan,
+    Sabah,
+    Sarawak,
+    Perak,
+    Kedah,
+    Terengganu,
+    Johor,
+    Melaka,
+    NegeriSembilan,
+    Penang,
+    Kelantan
+};
+
+struct Country
+{
+    public string name;
+    public int noOfStates;
+    public string[] states;
+    public int population;
+    public Malaysia mState;
+}
 
 class GlazerCalc // class is a container that holds data and program code. Every class needs an identifier (name)
 {
@@ -236,7 +265,8 @@ class GlazerCalc // class is a container that holds data and program code. Every
     }
     // End 09132020
 
-    static void Main() // main function of class, mandatory
+ //   static void Main() // main function of class, mandatory
+    static void Lola() // main function of class, mandatory
     {
         GlazerCalc g1 = new GlazerCalc();
         int i = 99;
