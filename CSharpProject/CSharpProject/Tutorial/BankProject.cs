@@ -11,9 +11,11 @@ Date          Comment
 09182020      First revision
 09202020	  Default constructor, constructor management and overwriting
 09202020	  Components and interface
+09212020	  Abstract class, Multiple interfaces, Method overriding, Parent class extension
  **/
 
 using System;
+using System.Diagnostics.Contracts;
 
 // enum
 enum AccountState
@@ -43,7 +45,73 @@ public interface IAccount
 	void PayInFunds(decimal amount);
 	bool WithdrawFunds(decimal amount);
 	decimal GetBalance();
+	string RudeLetterString();
 }
+
+// Multiple interfaces - 09212020
+public interface IPrintToPaper
+{
+	void DoPrint();
+}
+
+public class BabyAccount: Account, IPrintToPaper
+{
+	private decimal balance = 0;
+
+	public void DoPrint()
+    {
+		Console.WriteLine("Print");
+    }
+
+	// Method overriding - 09212020
+	public override bool WithdrawFunds(decimal amount)
+    {
+		if (amount > 10 || balance < amount)
+        {
+			return false;
+        }
+
+		// base - reference to the thing which has been overridden
+		return base.WithdrawFunds(amount); // refer Account.WithdrawFunds()
+		/*
+		balance -= amount;
+
+		return true;
+		*/
+    }
+
+	public void PayInFunds(decimal amount)
+    {
+		balance += amount;
+    }
+
+	public decimal GetBalance ()
+    {
+		return this.balance;
+    }
+}
+
+// Abstract class - 09212020 (continue)
+public abstract class AAccount : IAccount
+{
+	private decimal balance = 0;
+
+	public bool WithdrawFunds(decimal amount)
+    {
+		return true;
+    }
+
+	public decimal GetBalance()
+    {
+		return this.balance;
+    }
+
+	public void PayInFunds(decimal amount)
+    {
+		this.balance += amount;
+    }
+}
+
 
 public class Account : IAccount
 {
@@ -87,7 +155,8 @@ public class Account : IAccount
 		Console.WriteLine("no address and zero balance");
 	}
 
-	public bool WithdrawFunds (decimal amount)
+	/*Need to change declaration of method to make overriding work - 09212020*/
+	public virtual bool WithdrawFunds (decimal amount)
     {
 		if (balance < amount)
         {
