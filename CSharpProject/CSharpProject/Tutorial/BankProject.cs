@@ -12,6 +12,7 @@ Date          Comment
 09202020	  Default constructor, constructor management and overwriting
 09202020	  Components and interface
 09212020	  Abstract class, Multiple interfaces, Method overriding, Parent class extension
+09252020	  ToString, object
  **/
 
 using System;
@@ -80,6 +81,12 @@ public class BabyAccount: Account, IPrintToPaper
 		*/
     }
 
+	public override string RudeLetterString()
+    {
+		return "Tell daddy you are overdrawn";
+    }
+	// End method overriding 
+
 	public void PayInFunds(decimal amount)
     {
 		balance += amount;
@@ -91,14 +98,21 @@ public class BabyAccount: Account, IPrintToPaper
     }
 }
 
-// Abstract class - 09212020 (continue)
+// Abstract class - 09212020
 public abstract class AAccount : IAccount
 {
 	private decimal balance = 0;
+	public abstract string RudeLetterString();
 
-	public bool WithdrawFunds(decimal amount)
+	public virtual bool WithdrawFunds(decimal amount)
     {
-		return true;
+		if (balance < amount)
+        {
+			return false;
+        }
+
+		balance = balance - amount;
+		return true; 
     }
 
 	public decimal GetBalance()
@@ -112,8 +126,7 @@ public abstract class AAccount : IAccount
     }
 }
 
-
-public class Account : IAccount
+public class Account : AAccount
 {
 	private decimal balance = 0;
 	private string name, address;
@@ -128,9 +141,14 @@ public class Account : IAccount
 		Console.WriteLine("New account created");
     }
 
+	// method overriding - 09212020
+	public override string RudeLetterString()
+    {
+		return "You are overdrawn";
+    }
 
-	// Constructor overloading - 09202020
-	public Account(string inName, string inAddress, decimal inBalance)
+    // Constructor overloading - 09202020
+    public Account(string inName, string inAddress, decimal inBalance)
     {
 		balance = inBalance;
 		name = inName;
@@ -140,6 +158,18 @@ public class Account : IAccount
 		Console.WriteLine("Name: " + name);
 		Console.WriteLine("Address: " + address);
 		Console.WriteLine("Balance: " + balance);
+	}
+
+	public Account(string inName, decimal inBalance)
+    {
+		this.name = inName;
+		this.balance = inBalance;
+    }
+
+	// 09252020
+	public override string ToString()
+	{
+		return "Name: " + name + ", balance: " + balance;
 	}
 
 	// "this" method - 09202020
@@ -198,8 +228,9 @@ public class BankProject
 		Console.WriteLine("Testing default constructor.");
     }
 
-	public static void Main()
-    {
+	public static void TestMain()
+	//public static void Main()
+	{
 		/*
 		Account MyAccount;
 		MyAccount.State = AccountState.Active;
@@ -220,5 +251,11 @@ public class BankProject
 		Account johnAcc = new Account("John Smith", "123 street, US", 32222);
 		Account willAcc = new Account("Will Smith");
 		Account jamAcc = new Account("Jam Hsiao", "Taipei, Taiwan");
+		BabyAccount jamBaby = new BabyAccount();
+		Account testToStr = new Account("Nana", 2244);
+
+		Console.WriteLine(testToStr);
+		Console.WriteLine("Account: " + jamAcc.RudeLetterString());
+		Console.WriteLine("Baby account: " + jamBaby.RudeLetterString());
 	}
 }
