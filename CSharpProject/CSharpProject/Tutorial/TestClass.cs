@@ -15,6 +15,7 @@ Date          Comment
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.ComTypes;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace CSharpProject.Tutorial
@@ -24,6 +25,7 @@ namespace CSharpProject.Tutorial
         public int x;
         public int y;
 
+        /*
         public override bool Equals(object obj)
         {
             Point p = (Point) obj;
@@ -37,11 +39,33 @@ namespace CSharpProject.Tutorial
                 return false;
             }
         }
+        */
+        public void stringCompare()
+        {
+            string s1 = "Emelio";
+            string s2 = "Emelio";
+            char c1 = s1[5];
+
+
+            if (s1.Length == s2.Length)
+            {
+                Console.WriteLine("Same");
+            }
+            
+            if (s1.Equals(s2))
+            {
+                Console.WriteLine("Still same");
+            }
+
+            Console.WriteLine(c1);
+
+        }
     }
 
     public class TestClass
     {
-        public static void Main()
+        public static void TestMain()
+//        public static void Main()
         {
             Point spacePosition = new Point();
             spacePosition.x = 1;
@@ -55,6 +79,10 @@ namespace CSharpProject.Tutorial
             {
                 Console.WriteLine("Bang!");
             }
+
+            Point testString = new Point();
+            testString.stringCompare();
+
         }
     }
 }

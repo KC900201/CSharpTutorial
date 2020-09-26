@@ -13,7 +13,8 @@ Date          Comment
 09202020	  Components and interface
 09212020	  Abstract class, Multiple interfaces, Method overriding, Parent class extension
 09252020	  ToString, object
- **/
+09262020	  Set and Get method
+**/
 
 using System;
 using System.Diagnostics.Contracts;
@@ -45,8 +46,15 @@ public interface IAccount
 {
 	void PayInFunds(decimal amount);
 	bool WithdrawFunds(decimal amount);
-	decimal GetBalance();
+	decimal getBalance();
 	string RudeLetterString();
+
+	// interface and properties
+	int age
+    {
+		set;
+		get;
+    }
 }
 
 // Multiple interfaces - 09212020
@@ -58,6 +66,7 @@ public interface IPrintToPaper
 public class BabyAccount: Account, IPrintToPaper
 {
 	private decimal balance = 0;
+	private int age;
 
 	public void DoPrint()
     {
@@ -92,7 +101,13 @@ public class BabyAccount: Account, IPrintToPaper
 		balance += amount;
     }
 
-	public decimal GetBalance ()
+	// 09262020
+	public void setBalance(decimal balance)
+    {
+		this.balance = balance;
+    }
+
+	public decimal getBalance ()
     {
 		return this.balance;
     }
@@ -103,6 +118,7 @@ public abstract class AAccount : IAccount
 {
 	private decimal balance = 0;
 	public abstract string RudeLetterString();
+	private int age;
 
 	public virtual bool WithdrawFunds(decimal amount)
     {
@@ -115,7 +131,17 @@ public abstract class AAccount : IAccount
 		return true; 
     }
 
-	public decimal GetBalance()
+	public void setAge(int age)
+    {
+		this.age = age;
+    }
+
+	public int getAge()
+    {
+		return this.age;
+    }
+
+	public decimal getBalance()
     {
 		return this.balance;
     }
@@ -202,7 +228,7 @@ public class Account : AAccount
 		balance += amount;
     }
 
-	public decimal GetBalance ()
+	public decimal getBalance ()
     {
 		return balance;
     }
@@ -228,8 +254,7 @@ public class BankProject
 		Console.WriteLine("Testing default constructor.");
     }
 
-	public static void TestMain()
-	//public static void Main()
+	public static void Main()
 	{
 		/*
 		Account MyAccount;
@@ -246,7 +271,7 @@ public class BankProject
 
 		Account test = new Account();
 		//		test.PayInFunds(23343);
-		//		Console.WriteLine("Balance: " + test.GetBalance());
+		//		Console.WriteLine("Balance: " + test.getBalance());
 		// Test new account
 		Account johnAcc = new Account("John Smith", "123 street, US", 32222);
 		Account willAcc = new Account("Will Smith");
@@ -256,6 +281,8 @@ public class BankProject
 
 		Console.WriteLine(testToStr);
 		Console.WriteLine("Account: " + jamAcc.RudeLetterString());
-		Console.WriteLine("Baby account: " + jamBaby.RudeLetterString());
+		jamBaby.setBalance(355445);
+		Console.WriteLine("Baby account balance: " + jamBaby.getBalance());
+		Console.WriteLine("Baby account: " + jamBaby.RudeLetterString());		
 	}
 }
