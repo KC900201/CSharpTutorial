@@ -14,10 +14,13 @@ Date          Comment
 09212020	  Abstract class, Multiple interfaces, Method overriding, Parent class extension
 09252020	  ToString, object
 09262020	  Set and Get method
+09282020	  Hashtable and search performance; Advanced Programming
 **/
 
 using System;
+using System.Collections;
 using System.Diagnostics.Contracts;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 // enum
 enum AccountState
@@ -46,15 +49,25 @@ public interface IAccount
 {
 	void PayInFunds(decimal amount);
 	bool WithdrawFunds(decimal amount);
-	decimal getBalance();
+	decimal GetBalance();
 	string RudeLetterString();
-
+	string GetName();
 	// interface and properties
-	int age
+	int Age
     {
 		set;
 		get;
     }
+}
+
+// Interface for Bank (09282020)
+// A container class that provide methods which find a particular
+// method based on the name of the holder. We can express the behaviour that
+// that we need from our bank in terms of interface
+interface IBank
+{
+	IAccount FindAccount(string name);
+	bool StoreAccount(IAccount account);
 }
 
 // Multiple interfaces - 09212020
@@ -62,6 +75,66 @@ public interface IPrintToPaper
 {
 	void DoPrint();
 }
+
+public class ArrayBank : IBank
+{
+	private IAccount[] accounts;
+	public ArrayBank(int bankSize)
+	{
+		accounts = new IAccount[bankSize];
+	}
+
+	public IAccount FindAccount(string name)
+	{
+		int position = 0;
+
+		for (position = 0; position < accounts.Length; position++)
+		{
+			if (accounts[position] == null)
+			{
+				continue;
+			}
+
+			if (accounts[position].GetName() == name)
+			{
+				return accounts[position];
+			}
+		}
+		return null;
+	}
+
+	public bool StoreAccount(IAccount account)
+	{
+		int position = 0;
+
+		for (position = 0; position < accounts.Length; position++)
+		{
+			if (accounts[position] == null)
+			{
+				accounts[position] = account;
+				return true;
+			}
+		}
+		return false;
+	}
+}
+
+public class HashBank: IBank
+{
+	Hashtable bankHashtable = new Hashtable();
+
+	public IAccount FindAccount(string name)
+    {
+		return bankHashtable[name] as IAccount;
+    }
+
+	public bool StoreAccount(IAccount account)
+    {
+		bankHashtable.Add(account.GetName(), account);
+		return true;
+    }
+}
+
 
 public class BabyAccount: Account, IPrintToPaper
 {
@@ -117,10 +190,15 @@ public class BabyAccount: Account, IPrintToPaper
 public abstract class AAccount : IAccount
 {
 	private decimal balance = 0;
+	private string name;
 	public abstract string RudeLetterString();
-	private int age;
+	int IAccount.Age 
+	{
+		set;
+		get;
+	}
 
-	public virtual bool WithdrawFunds(decimal amount)
+    public virtual bool WithdrawFunds(decimal amount)
     {
 		if (balance < amount)
         {
@@ -131,19 +209,14 @@ public abstract class AAccount : IAccount
 		return true; 
     }
 
-	public void setAge(int age)
-    {
-		this.age = age;
-    }
-
-	public int getAge()
-    {
-		return this.age;
-    }
-
-	public decimal getBalance()
+	public decimal GetBalance()
     {
 		return this.balance;
+    }
+
+	public string GetName()
+    {
+		return this.name;
     }
 
 	public void PayInFunds(decimal amount)
@@ -254,7 +327,8 @@ public class BankProject
 		Console.WriteLine("Testing default constructor.");
     }
 
-	public static void Main()
+//	public static void Main()
+	public static void TestMain()
 	{
 		/*
 		Account MyAccount;
@@ -283,6 +357,10 @@ public class BankProject
 		Console.WriteLine("Account: " + jamAcc.RudeLetterString());
 		jamBaby.setBalance(355445);
 		Console.WriteLine("Baby account balance: " + jamBaby.getBalance());
-		Console.WriteLine("Baby account: " + jamBaby.RudeLetterString());		
+		Console.WriteLine("Baby account: " + jamBaby.RudeLetterString());
+
+		// Store an account in a bank (09282020)
+		IBank testBank = new ArrayBank(50);
+
 	}
 }
