@@ -20,6 +20,7 @@ Date          Comment
 using System;
 using System.Collections;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 
 // enum
@@ -319,6 +320,107 @@ public class Account : AAccount
     }
 }
 
+public class CustomerAccount: IAccount
+{
+	private string name;
+	private decimal balance = 0;
+
+    int IAccount.Age { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+    public CustomerAccount (string newName, decimal initialBalance)
+    {
+		this.balance = initialBalance;
+		this.name = newName;
+
+		Console.WriteLine("New account created");
+		Console.WriteLine("Name: " + this.name);
+		Console.WriteLine("Balance: " + this.balance);
+	}
+
+	public virtual bool WithdrawFunds (decimal amount)
+    {
+		if (balance < amount)
+        {
+			return false;
+        }
+
+		balance -= amount;
+		return true;
+    }
+
+	public void PayInFunds (decimal amount)
+    {
+		balance += amount;
+    }
+
+	public decimal GetBalance ()
+    {
+		return this.balance;
+    }
+
+	public string GetName()
+    {
+		return this.name;
+    }
+
+	// Saving An Account method - 09282020
+	public bool Save (string fileName)
+    {
+		// given the name of the file that the account is to be stored in. 
+		// It writes out the name of the customer and the balance of the 
+		// account.
+		try
+		{
+			System.IO.TextWriter textOut = new System.IO.StreamWriter(fileName);
+			textOut.WriteLine(name);
+			textOut.WriteLine(balance);
+			textOut.Close();
+        } 
+		catch
+        {
+			return false;
+        }
+
+		return true;
+    }
+
+	// Loading an Account method - 09282020
+	public static CustomerAccount Load(string fileName)
+    {
+		CustomerAccount result = null;
+		System.IO.TextReader textIn = null;
+
+		try
+        {
+			textIn = new System.IO.StreamReader(fileName);
+			string nameText = textIn.ReadLine();
+			string balanceText = textIn.ReadLine();
+			decimal balance = decimal.Parse(balanceText);
+			result = new CustomerAccount(nameText, balance);
+        }
+		catch
+        {
+			// returns null to indicate that load failed if 
+			// anything bad happens
+			Console.WriteLine("Load failed");
+			return null;
+        }
+		finally
+        {
+			// close file to prevent error
+			if (textIn != null)
+				textIn.Close();
+        }
+
+		return result;
+    }
+
+    string IAccount.RudeLetterString()
+    {
+        throw new NotImplementedException();
+    }
+}
+
 public class BankProject
 {
 	// default constructor
@@ -327,8 +429,7 @@ public class BankProject
 		Console.WriteLine("Testing default constructor.");
     }
 
-//	public static void Main()
-	public static void TestMain()
+	public static void Main()
 	{
 		/*
 		Account MyAccount;
@@ -343,10 +444,11 @@ public class BankProject
 		Console.WriteLine("Balance is " + MyAccount.Balance);
 		*/
 
-		Account test = new Account();
+		//Account test = new Account();
 		//		test.PayInFunds(23343);
 		//		Console.WriteLine("Balance: " + test.getBalance());
 		// Test new account
+		/*
 		Account johnAcc = new Account("John Smith", "123 street, US", 32222);
 		Account willAcc = new Account("Will Smith");
 		Account jamAcc = new Account("Jam Hsiao", "Taipei, Taiwan");
@@ -358,6 +460,20 @@ public class BankProject
 		jamBaby.setBalance(355445);
 		Console.WriteLine("Baby account balance: " + jamBaby.getBalance());
 		Console.WriteLine("Baby account: " + jamBaby.RudeLetterString());
+		*/
+		// save account
+		CustomerAccount robAcc = new CustomerAccount("Rob Well", 9999);
+
+		Console.WriteLine("Save an account");
+		robAcc.Save("test.txt");
+
+		// load an account
+		Console.WriteLine("Load an account");
+		CustomerAccount testLoad = CustomerAccount.Load("test.txt");
+		if (testLoad == null)
+        {
+			Console.WriteLine("File does not exist");
+        }
 
 		// Store an account in a bank (09282020)
 		IBank testBank = new ArrayBank(50);

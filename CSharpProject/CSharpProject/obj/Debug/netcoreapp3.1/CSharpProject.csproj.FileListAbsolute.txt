@@ -1,4 +1,3 @@
-C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\obj\Debug\netcoreapp3.1\CSharpProject.csprojAssemblyReference.cache
 C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\obj\Debug\netcoreapp3.1\CSharpProject.AssemblyInfoInputs.cache
 C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\obj\Debug\netcoreapp3.1\CSharpProject.AssemblyInfo.cs
 C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\obj\Debug\netcoreapp3.1\CSharpProject.csproj.CoreCompileInputs.cache
