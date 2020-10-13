@@ -15,11 +15,16 @@ Date          Comment
 09252020	  ToString, object
 09262020	  Set and Get method
 09282020	  Hashtable and search performance; Advanced Programming
+10022020	  Multiple accounts saving
+10092020	  Handling different kinds of account,
+			  Business objects and editing
+10132020	  Editor class
 **/
 
 using System;
 using System.Collections;
 using System.Diagnostics.Contracts;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 
@@ -53,6 +58,12 @@ public interface IAccount
 	decimal GetBalance();
 	string RudeLetterString();
 	string GetName();
+	void SetName(string name);
+
+	bool ValidateName(string name);
+	bool Save(string filename);
+	void Save(System.IO.TextWriter textOut);
+
 	// interface and properties
 	int Age
     {
@@ -77,6 +88,109 @@ public interface IPrintToPaper
 	void DoPrint();
 }
 
+
+// 10132020
+public class AccountEditTextUI
+{
+	private IAccount account;
+
+	public AccountEditTextUI(CustomerAccount inAccount)
+    {
+		this.account = inAccount;
+    }
+
+	public void EditName()
+    {
+		string newName;
+
+		Console.WriteLine("Edit user name");
+
+		while(true)
+        {
+			Console.Write("Enter new name: ");
+			newName = Console.ReadLine();
+
+			if (this.account.ValidateName(newName))
+            {
+				this.account.SetName(newName);
+				break;
+            }
+        }
+
+//		this.account.SetName(newName);
+	}
+
+	public void PayInFunds ()
+    {
+		decimal amount;
+
+		Console.WriteLine("Pay In Funds");
+
+		while (true)
+		{
+			Console.Write("Enter amount: ");
+			amount = decimal.Parse(Console.ReadLine());
+
+			if (amount > 0)
+			{
+				this.account.PayInFunds(amount);
+				break;
+			}
+		}
+	}
+
+	public void WithDrawFunds()
+	{
+		decimal amount;
+
+		Console.WriteLine("Withdraw Funds");
+
+		while (true)
+		{
+			Console.Write("Enter amount: ");
+			amount = decimal.Parse(Console.ReadLine());
+
+			if (amount > 0)
+			{
+				this.account.WithdrawFunds(amount);
+				break;
+			}
+		}
+	}
+
+	public void DoEdit (CustomerAccount account)
+    {
+		string command;
+		do
+		{
+			Console.WriteLine("Editing account for {0}", account.GetName());
+			Console.WriteLine("Enter name to edit name");
+			Console.WriteLine("Enter pay to pay in funds");
+			Console.WriteLine("Enter draw to draw out funds");
+			Console.WriteLine("Enter exit to exit program");
+			Console.Write("Enter command: ");
+			command = Console.ReadLine().Trim().ToLower();
+
+			switch(command)
+            {
+				case "name":
+					EditName();
+					break;
+				case "pay":
+					PayInFunds();
+					break;
+				case "draw":
+					WithDrawFunds();
+					break;
+				default:
+					Console.WriteLine("Invalid command");
+					break;
+            }
+
+		} while (command != "exit");
+    }
+
+}
 public class ArrayBank : IBank
 {
 	private IAccount[] accounts;
@@ -134,17 +248,57 @@ public class HashBank: IBank
 		bankHashtable.Add(account.GetName(), account);
 		return true;
     }
+
+	public void Save(System.IO.TextWriter textOut)
+	{
+		textOut.WriteLine(bankHashtable.Count);
+		foreach (CustomerAccount acc in bankHashtable.Values)
+		{
+			acc.Save(textOut);
+		}
+	}
+
+	public static HashBank Load(System.IO.TextReader textIn)
+    {
+		HashBank result = new HashBank();
+		string countString = textIn.ReadLine();
+		int count = int.Parse(countString);
+
+		for(int i = 0; i < count; i++)
+        {
+			//			CustomerAccount account = CustomerAccount.Load(textIn);
+			// Override using factory class to create bank accounts
+			string className = textIn.ReadLine();
+			IAccount account = AccountFactory.MakeAccount(className, textIn);
+			result.bankHashtable.Add(account.GetName(), account.GetBalance());
+        }
+
+		return result;
+    }
 }
 
 
 public class BabyAccount: Account, IPrintToPaper
 {
 	private decimal balance = 0;
+	private string parentName;
 	private int age;
+
+	public string GetParentName ()
+    {
+		return this.parentName;
+    }
 
 	public void DoPrint()
     {
 		Console.WriteLine("Print");
+    }
+
+	// Saving a child class - 10092020
+	public void Save(System.IO.TextWriter textOut)
+    {
+		base.Save(textOut);
+		textOut.WriteLine(parentName);
     }
 
 	// Method overriding - 09212020
@@ -176,14 +330,27 @@ public class BabyAccount: Account, IPrintToPaper
     }
 
 	// 09262020
-	public void setBalance(decimal balance)
+	public void SetBalance(decimal balance)
     {
 		this.balance = balance;
     }
 
-	public decimal getBalance ()
+	public decimal GetBalance ()
     {
 		return this.balance;
+    }
+
+	// Full Baby Account implementation (10/09/2020)
+	public BabyAccount(string newName, decimal initialBalance,
+		string inParentName) : base(newName, initialBalance)
+    {
+		this.parentName = inParentName;
+    }
+
+	// Create a Baby Account from constructors of parent class - 10092020
+	public BabyAccount (System.IO.TextReader textIn) : base(textIn) 
+	{
+		this.parentName = textIn.ReadLine();
     }
 }
 
@@ -220,10 +387,27 @@ public abstract class AAccount : IAccount
 		return this.name;
     }
 
+	public void SetName(string name)
+    {
+		this.name = name;
+    }
+
 	public void PayInFunds(decimal amount)
     {
 		this.balance += amount;
     }
+
+    bool IAccount.Save(string filename)
+    {
+        throw new NotImplementedException();
+    }
+
+    void IAccount.Save(TextWriter textOut)
+    {
+        throw new NotImplementedException();
+    }
+
+    public abstract bool ValidateName(string name);
 }
 
 public class Account : AAccount
@@ -247,8 +431,51 @@ public class Account : AAccount
 		return "You are overdrawn";
     }
 
-    // Constructor overloading - 09202020
-    public Account(string inName, string inAddress, decimal inBalance)
+	// Multiple accounts saving (method overloading) - 10022020
+	public void Save(System.IO.TextWriter textOut)
+	{
+		textOut.WriteLine(this.name);
+		textOut.WriteLine(this.balance);
+		textOut.Close();
+	}
+
+	// Saving An Account method - 09282020
+	public bool Save(string fileName)
+	{
+		// given the name of the file that the account is to be stored in. 
+		// It writes out the name of the customer and the balance of the 
+		// account.
+
+		// Calling another save method - 10022020
+		System.IO.TextWriter textOut = null;
+
+		try
+		{
+			/*
+			System.IO.TextWriter textOut = new System.IO.StreamWriter(fileName);
+			textOut.WriteLine(name);
+			textOut.WriteLine(balance);
+			*/
+			textOut = new System.IO.StreamWriter(fileName);
+			Save(textOut);
+
+			//			textOut.Close();
+		}
+		catch
+		{
+			return false;
+		}
+		finally
+		{
+			if (textOut != null)
+				textOut.Close();
+		}
+
+		return true;
+	}
+
+	// Constructor overloading - 09202020
+	public Account(string inName, string inAddress, decimal inBalance)
     {
 		balance = inBalance;
 		name = inName;
@@ -284,6 +511,12 @@ public class Account : AAccount
 	{
 		Console.WriteLine("no address and zero balance");
 	}
+	 // 10092020
+	public Account(System.IO.TextReader textIn)
+    {
+		this.name = textIn.ReadLine();
+		this.balance = decimal.Parse(textIn.ReadLine());
+    }
 
 	/*Need to change declaration of method to make overriding work - 09212020*/
 	public virtual bool WithdrawFunds (decimal amount)
@@ -318,6 +551,11 @@ public class Account : AAccount
 			return false;
         }
     }
+
+    public override bool ValidateName(string name)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 public class CustomerAccount: IAccount
@@ -325,7 +563,7 @@ public class CustomerAccount: IAccount
 	private string name;
 	private decimal balance = 0;
 
-    int IAccount.Age { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+	int IAccount.Age { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     public CustomerAccount (string newName, decimal initialBalance)
     {
@@ -358,10 +596,36 @@ public class CustomerAccount: IAccount
 		return this.balance;
     }
 
+	// Validation method - 10092020
+	public bool ValidateName (string name)
+	{
+		if (name == null)
+        {
+			Console.WriteLine("Name parameter null");
+			return false;
+        }
+		else if (name.Trim().Length == 0)
+        {
+			Console.WriteLine("No text in name");
+			return false;
+        } 
+	
+		return true;
+    }
+
 	public string GetName()
     {
 		return this.name;
     }
+
+	// 10092020
+	public void SetName(string name)
+    {
+		if (ValidateName(name)) // validation before setting
+        {
+			this.name = name;
+		}
+	}
 
 	// Saving An Account method - 09282020
 	public bool Save (string fileName)
@@ -369,19 +633,41 @@ public class CustomerAccount: IAccount
 		// given the name of the file that the account is to be stored in. 
 		// It writes out the name of the customer and the balance of the 
 		// account.
+
+		// Calling another save method - 10022020
+		System.IO.TextWriter textOut = null;
+
 		try
 		{
+			/*
 			System.IO.TextWriter textOut = new System.IO.StreamWriter(fileName);
 			textOut.WriteLine(name);
 			textOut.WriteLine(balance);
-			textOut.Close();
+			*/
+			textOut = new System.IO.StreamWriter(fileName);
+			Save(textOut);
+
+//			textOut.Close();
         } 
 		catch
         {
 			return false;
         }
+		finally
+        {
+			if (textOut != null)
+				textOut.Close();
+        }
 
 		return true;
+    }
+
+	// Multiple accounts saving (method overloading) - 10022020
+	public void Save (System.IO.TextWriter textOut)
+    {
+		textOut.WriteLine(this.name);
+		textOut.WriteLine(this.balance);
+		textOut.Close();
     }
 
 	// Loading an Account method - 09282020
@@ -415,9 +701,45 @@ public class CustomerAccount: IAccount
 		return result;
     }
 
+	// Loading an Account method - 10022020
+	public static CustomerAccount Load(System.IO.TextReader textIn)
+	{
+		CustomerAccount result = null;
+
+		try
+		{
+			string name = textIn.ReadLine();
+			decimal balance = decimal.Parse(textIn.ReadLine());
+			result = new CustomerAccount(name, balance);
+		}
+		catch
+		{
+			return null;
+		}
+
+		return result;
+	}
+
     string IAccount.RudeLetterString()
     {
         throw new NotImplementedException();
+    }
+}
+
+// Factory class - 10092020
+class AccountFactory
+{
+	public static IAccount MakeAccount(string name, System.IO.TextReader textIn)
+    {
+		switch (name)
+        {
+			case "BabyAccount":
+				return new BabyAccount(textIn);
+			case "Account":
+				return new Account(textIn);
+			default:
+				return null;
+        }
     }
 }
 
@@ -460,12 +782,15 @@ public class BankProject
 		jamBaby.setBalance(355445);
 		Console.WriteLine("Baby account balance: " + jamBaby.getBalance());
 		Console.WriteLine("Baby account: " + jamBaby.RudeLetterString());
-		*/
+		
 		// save account
 		CustomerAccount robAcc = new CustomerAccount("Rob Well", 9999);
 
 		Console.WriteLine("Save an account");
 		robAcc.Save("test.txt");
+
+		// Baby Account
+		BabyAccount babyEric = new BabyAccount("Eric", 20, "John");
 
 		// load an account
 		Console.WriteLine("Load an account");
@@ -476,7 +801,23 @@ public class BankProject
         }
 
 		// Store an account in a bank (09282020)
-		IBank testBank = new ArrayBank(50);
+		Console.WriteLine("Reading accounts from text");
+		HashBank testHash = HashBank.Load(new System.IO.StreamReader("testBank.txt"));
+		// Print out all accounts
+		*/
+
+		// Test validation
+		bool reply;
+		reply =  new CustomerAccount("Jobs", 9999).ValidateName("");
+		Console.WriteLine(reply.ToString());
+
+		CustomerAccount testVal = new CustomerAccount("Rob", 50);
+		//		testVal.SetName("");
+		// Implement text Editor
+		AccountEditTextUI editor = new AccountEditTextUI(testVal);
+		editor.EditName();
+
+		Console.WriteLine(testVal.GetName());
 
 	}
 }

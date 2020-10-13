@@ -10,3 +10,4 @@ C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\bin\
 C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\obj\Debug\netcoreapp3.1\CSharpProject.dll
 C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\obj\Debug\netcoreapp3.1\CSharpProject.pdb
 C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\obj\Debug\netcoreapp3.1\CSharpProject.genruntimeconfig.cache
+C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\obj\Debug\netcoreapp3.1\CSharpProject.csprojAssemblyReference.cache
