@@ -19,6 +19,7 @@ Date          Comment
 10092020	  Handling different kinds of account,
 			  Business objects and editing
 10132020	  Editor class
+10182020	  Exception - creating own exception class
 **/
 
 using System;
@@ -88,6 +89,15 @@ public interface IPrintToPaper
 	void DoPrint();
 }
 
+// 10182020
+public class BankException: System.Exception
+{
+	public BankException (string message) : 
+		base(message)
+    {
+
+    }
+}
 
 // 10132020
 public class AccountEditTextUI
@@ -601,12 +611,12 @@ public class CustomerAccount: IAccount
 	{
 		if (name == null)
         {
-			Console.WriteLine("Name parameter null");
+//			Console.WriteLine("Name parameter null");
 			return false;
         }
 		else if (name.Trim().Length == 0)
         {
-			Console.WriteLine("No text in name");
+//			Console.WriteLine("No text in name");
 			return false;
         } 
 	
@@ -624,7 +634,11 @@ public class CustomerAccount: IAccount
 		if (ValidateName(name)) // validation before setting
         {
 			this.name = name;
-		}
+		} 
+		else
+        {
+			throw new BankException("Invalid Name");
+        }
 	}
 
 	// Saving An Account method - 09282020
@@ -751,7 +765,8 @@ public class BankProject
 		Console.WriteLine("Testing default constructor.");
     }
 
-	public static void Main()
+	//public static void Main()
+	public static void testMain()
 	{
 		/*
 		Account MyAccount;
@@ -818,6 +833,16 @@ public class BankProject
 		editor.EditName();
 
 		Console.WriteLine(testVal.GetName());
+
+		CustomerAccount testExcep;
+		try
+        {
+			testExcep = new CustomerAccount("", 9000);
+        } 
+		catch (BankException exception)
+        {
+			Console.WriteLine("Error: " + exception.Message);
+        }
 
 	}
 }
