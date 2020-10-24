@@ -30,7 +30,8 @@ namespace CSharpProject.Tutorial
             }
         }
 
-        static void Main()
+        //static void Main()
+        public static void testMain()
         {
             /* The Thread class provides a number of methods that your program can use to control what it does. To start the 
              * thread running you can use the Start method:
