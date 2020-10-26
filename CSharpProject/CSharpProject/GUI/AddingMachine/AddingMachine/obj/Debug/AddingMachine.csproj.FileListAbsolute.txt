@@ -1,0 +1,15 @@
+C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\GUI\AddingMachine\AddingMachine\obj\Debug\AddingMachine.csprojAssemblyReference.cache
+C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\GUI\AddingMachine\AddingMachine\obj\Debug\MainWindow.g.cs
+C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\GUI\AddingMachine\AddingMachine\obj\Debug\App.g.cs
+C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\GUI\AddingMachine\AddingMachine\obj\Debug\AddingMachine_MarkupCompile.cache
+C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\GUI\AddingMachine\AddingMachine\obj\Debug\AddingMachine_MarkupCompile.lref
+C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\GUI\AddingMachine\AddingMachine\bin\Debug\AddingMachine.exe.config
+C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\GUI\AddingMachine\AddingMachine\bin\Debug\AddingMachine.exe
+C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\GUI\AddingMachine\AddingMachine\bin\Debug\AddingMachine.pdb
+C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\GUI\AddingMachine\AddingMachine\obj\Debug\MainWindow.baml
+C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\GUI\AddingMachine\AddingMachine\obj\Debug\AddingMachine.g.resources
+C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\GUI\AddingMachine\AddingMachine\obj\Debug\AddingMachine.Properties.Resources.resources
+C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\GUI\AddingMachine\AddingMachine\obj\Debug\AddingMachine.csproj.GenerateResource.cache
+C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\GUI\AddingMachine\AddingMachine\obj\Debug\AddingMachine.csproj.CoreCompileInputs.cache
+C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\GUI\AddingMachine\AddingMachine\obj\Debug\AddingMachine.exe
+C:\Users\user\Documents\Projects\CSharpTutorial\CSharpProject\CSharpProject\GUI\AddingMachine\AddingMachine\obj\Debug\AddingMachine.pdb
